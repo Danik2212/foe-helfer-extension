@@ -646,9 +646,10 @@ let Calculator = {
 
 
 			// Snipen
-			
-			EinsatzClassSnipe = (ForderRankCosts[Rank] - EigenBetrag > StrategyPoints.AvailableFP ? 'error' : ''); //Default: rot wenn Vorrat nicht ausreichend, sonst gelb
-			EinsatzTextSnipe = HTML.Format(ForderRankCosts[Rank]) //Default: Einsatz
+			let SnipeRankCost = ForderRankCosts[Rank]-SaveGewinn
+
+			EinsatzClassSnipe = (SnipeRankCost - EigenBetrag > StrategyPoints.AvailableFP ? 'error' : ''); //Default: rot wenn Vorrat nicht ausreichend, sonst gelb
+			EinsatzTextSnipe = HTML.Format(SnipeRankCost) //Default: Einsatz
 			EinsatzTooltipSnipe = [];
 
 			GewinnClassSnipe = (SaveGewinn >= 0 ? 'success' : 'error'); //Default: Grün wenn >= 0 sonst rot
@@ -659,8 +660,8 @@ let Calculator = {
 			KursTextSnipe = (SaveGewinn >= 0 ? Calculator.FormatKurs(Kurs) : '-'); //Default: Kurs anzeigen bei Gewinn
 			KursTooltipSnipe = [];
 
-			if (ForderRankCosts[Rank] - EigenBetrag > StrategyPoints.AvailableFP) {
-				EinsatzTooltipSnipe.push(HTML.i18nReplacer(i18n('Boxes.Calculator.TTSnipeFPStockLow'), { 'fpstock': StrategyPoints.AvailableFP, 'costs': ForderRankCosts[Rank] - EigenBetrag, 'tooless': (ForderRankCosts[Rank] - EigenBetrag - StrategyPoints.AvailableFP) }));
+			if (SnipeRankCost - EigenBetrag > StrategyPoints.AvailableFP) {
+				EinsatzTooltipSnipe.push(HTML.i18nReplacer(i18n('Boxes.Calculator.TTSnipeFPStockLow'), { 'fpstock': StrategyPoints.AvailableFP, 'costs': SnipeRankCost - EigenBetrag, 'tooless': (SnipeRankCost - EigenBetrag - StrategyPoints.AvailableFP) }));
 			}
 
 			if (SaveGewinn > 0) {
@@ -675,17 +676,17 @@ let Calculator = {
 
 				RankClass = 'info';
 
-				if (Einzahlungen[Rank] < ForderRankCosts[Rank]) {
+				if (Einzahlungen[Rank] < SnipeRankCost) {
 					EinsatzClassSnipe = 'error';
-					EinsatzTooltipSnipe.push(HTML.i18nReplacer(i18n('Boxes.Calculator.TTPaidTooLess'), { 'paid': Einzahlungen[Rank], 'topay': ForderRankCosts[Rank], 'tooless': ForderRankCosts[Rank] - Einzahlungen[Rank] }));
+					EinsatzTooltipSnipe.push(HTML.i18nReplacer(i18n('Boxes.Calculator.TTPaidTooLess'), { 'paid': Einzahlungen[Rank], 'topay': SnipeRankCost, 'tooless': SnipeRankCost - Einzahlungen[Rank] }));
 				}
 				else {
 					EinsatzClassSnipe = 'info';
 				}
 
 				EinsatzTextSnipe = HTML.Format(Einzahlungen[Rank]);
-				if (Einzahlungen[Rank] < ForderRankCosts[Rank]) {
-					EinsatzTextSnipe += '/' + HTML.Format(ForderRankCosts[Rank]);
+				if (Einzahlungen[Rank] < SnipeRankCost) {
+					EinsatzTextSnipe += '/' + HTML.Format(SnipeRankCost);
 				}
 
 				GewinnClass = 'info';
